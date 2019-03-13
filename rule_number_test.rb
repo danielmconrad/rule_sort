@@ -3,7 +3,12 @@ require_relative 'rule_number'
 
 describe RuleNumber do
   it 'integers' do
-    sorted = %w[2 3 4]
+    sorted = %w[
+      2
+      3
+      4
+    ]
+
     assert_equal sorted, reverse_and_sort(sorted)
   end
 
@@ -27,7 +32,7 @@ describe RuleNumber do
     assert_equal sorted, reverse_and_sort(sorted)
   end
 
-  it 'different levels' do
+  it 'capital letter precidence' do
     skip
     sorted = %w[
       6A
@@ -35,7 +40,9 @@ describe RuleNumber do
     ]
 
     assert_equal sorted, reverse_and_sort(sorted)
+  end
 
+  it 'different levels' do
     sorted = %w[
       6.1
       6.1(a)

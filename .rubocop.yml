@@ -1,0 +1,7 @@
+Metrics/AbcSize:
+  Max: 25
+Metrics/BlockLength:
+  Exclude:
+    - '**/*_test.rb'
+Metrics/MethodLength:
+  Max: 15

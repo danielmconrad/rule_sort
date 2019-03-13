@@ -1,3 +1,5 @@
+# RomanNumeral attempts to convert a string to an integer
+# based on the Roman Numeral representation of that string
 class RomanNumeral
   attr_reader :number, :roman
 
@@ -15,11 +17,11 @@ class RomanNumeral
   end
 
   private
-  
+
   def from_roman(roman)
     r = roman.upcase
     number = 0
-    
+
     until r.empty? do
       case
       # when r.start_with?('M')  then val = 1000; len = 1

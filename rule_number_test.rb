@@ -191,7 +191,6 @@ describe RuleNumber do
   end
 
   def reverse_and_sort(values)
-    # puts ""
     values.reverse
           .collect { |number| RuleNumber.new(number) }
           .sort

@@ -3,6 +3,22 @@
 class RomanNumeral
   attr_reader :number, :roman
 
+  CHARACTERS = [
+    # ['M',  1000],
+    # ['CM',  900],
+    # ['D',   500],
+    # ['CD',  400],
+    # ['C',   100],
+    # ['XC',   90],
+    ['L',    50],
+    ['XL',   40],
+    ['X',    10],
+    ['IX',    9],
+    ['V',     5],
+    ['IV',    4],
+    ['I',     1]
+  ].freeze
+
   def initialize(roman)
     @roman = roman
     @number = from_roman(roman)
@@ -18,31 +34,22 @@ class RomanNumeral
 
   private
 
+  def valid?(roman)
+    # MDC Not yet supported
+    /^[LXVI]+$/.match(roman.upcase)
+  end
+
   def from_roman(roman)
-    r = roman.upcase
+    raise ArgumentError, "invalid numerals: #{roman}" unless valid?(roman)
+
     number = 0
+    remaining_characters = roman.upcase
 
-    until r.empty? do
-      case
-      # when r.start_with?('M')  then val = 1000; len = 1
-      # when r.start_with?('CM') then val = 900;  len = 2
-      # when r.start_with?('D')  then val = 500;  len = 1
-      # when r.start_with?('CD') then val = 400;  len = 2
-      # when r.start_with?('C')  then val = 100;  len = 1
-      # when r.start_with?('XC') then val = 90;   len = 2
-      when r.start_with?('L')  then val = 50;   len = 1
-      when r.start_with?('XL') then val = 40;   len = 2
-      when r.start_with?('X')  then val = 10;   len = 1
-      when r.start_with?('IX') then val = 9;    len = 2
-      when r.start_with?('V')  then val = 5;    len = 1
-      when r.start_with?('IV') then val = 4;    len = 2
-      when r.start_with?('I')  then val = 1;    len = 1
-      else
-        raise ArgumentError.new("invalid roman numerals: #{roman}")
+    CHARACTERS.each do |pair|
+      while remaining_characters.start_with?(pair[0])
+        number += pair[1]
+        remaining_characters.slice!(0, pair[0].length)
       end
-
-      number += val
-      r.slice!(0, len)
     end
 
     number

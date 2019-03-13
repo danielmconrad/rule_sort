@@ -19,7 +19,7 @@ class RuleNumber
                   .gsub(/[\(\)\. ]+/, ' ')
                   .gsub(/[ ]+/, ' ')
                   .split(' ')
-                  .map { |s| classify(s) }
+                  .map { |part| classify_part(part) }
   end
   
   def to_s
@@ -39,13 +39,12 @@ class RuleNumber
       parts_piece = parts[idx]
       other_piece = other.parts[idx]
 
-
       if parts_piece.class != other_piece.class
-        if string_or_roman_conundrum?(parts_piece, other_piece)
+        if single_string_and_roman?(parts_piece, other_piece)
           parts_piece = parts_piece.to_s 
           other_piece = other_piece.to_s 
         else
-          return sort_divergent_classes(parts_piece, other_piece)
+          return compare_divergent_classes(parts_piece, other_piece)
         end
       end
       
@@ -62,7 +61,7 @@ class RuleNumber
 
   private
 
-  def classify(part)
+  def classify_part(part)
     begin
       Integer(part)
     rescue
@@ -74,19 +73,22 @@ class RuleNumber
     end 
   end
 
+  # Temporarily Deactivated
+  # 
   # Edge Case: a <=> c
   #   c could have been interperetted as a RomanNumeral
   #   In the case that both values have a length of 1 and one of those values is 
   #   definitely not a RomanNumeral, we need to treat both as strings
-  def string_or_roman_conundrum?(first, second)
-    return unless first.is_a?(String) || first.is_a?(RomanNumeral)
-    return unless second.is_a?(String) || second.is_a?(RomanNumeral)
-    return unless first.to_s.length == 1
-    return unless second.to_s.length == 1
-    true
+  def single_string_and_roman?(first, second)
+    # return unless first.is_a?(String) || first.is_a?(RomanNumeral)
+    # return unless second.is_a?(String) || second.is_a?(RomanNumeral)
+    # return unless first.to_s.length == 1
+    # return unless second.to_s.length == 1
+    # true
+    false
   end
 
-  def sort_divergent_classes(first, second)
+  def compare_divergent_classes(first, second)
     first_priority = CLASS_PRIORITIES.find_index(first.class.name)
     second_priority = CLASS_PRIORITIES.find_index(second.class.name)
     

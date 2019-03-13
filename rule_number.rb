@@ -30,33 +30,7 @@ class RuleNumber
 	# 1 means self > other
 	# 0 means identical
   def <=>(other)
-    max_parts_length = [parts.length, other.parts.length].max
-
-    for idx in 0..max_parts_length
-      return LESS_THAN if idx == parts.length
-      return GREATER_THAN if idx == other.parts.length
-
-      parts_piece = parts[idx]
-      other_piece = other.parts[idx]
-
-      if parts_piece.class != other_piece.class
-        if single_string_and_roman?(parts_piece, other_piece)
-          parts_piece = parts_piece.to_s 
-          other_piece = other_piece.to_s 
-        else
-          return compare_divergent_classes(parts_piece, other_piece)
-        end
-      end
-      
-      value_for_part = value_for(parts_piece)
-      value_for_other = value_for(other_piece)
-
-      if value_for_part != value_for_other
-        return value_for_part <=> value_for_other
-      end
-    end
-    
-    IDENTICAL
+    compare_parts(parts, other.parts)
   end
 
   private
@@ -73,8 +47,65 @@ class RuleNumber
     end 
   end
 
-  # Temporarily Deactivated
-  # 
+  def compare_parts(first_parts, second_parts)
+    max_parts_length = [first_parts.length, second_parts.length].max
+
+    for idx in 0..max_parts_length
+      return LESS_THAN if idx == first_parts.length
+      return GREATER_THAN if idx == second_parts.length
+
+      first_part = first_parts[idx]
+      second_part = second_parts[idx]
+
+      if divergent_classes?(first_part, second_part)
+        # Temporarily Disabled
+        if single_string_and_roman?(first_part, second_part)
+          first_part = first_part.to_s 
+          second_part = second_part.to_s 
+        else
+          return compare_divergent_classes(first_part, second_part)
+        end
+      end
+      
+      value_for_part = value_for(first_part)
+      value_for_other = value_for(second_part)
+
+      if value_for_part != value_for_other
+        if repeat_strings?(value_for_part, value_for_other)
+          return compare_repeat_strings(value_for_part.to_s, value_for_other.to_s)
+        end
+
+        return value_for_part <=> value_for_other
+      end
+    end
+    
+    IDENTICAL
+  end
+
+  def repeat_strings?(first, second)
+    return unless first.is_a?(String) && second.is_a?(String) 
+    return if first.length == second.length
+    first.split('').uniq.length == 1 && second.split('').uniq.length == 1
+  end
+
+  # Example: bb <=> a
+  def compare_repeat_strings(first, second)
+    return first.length <=> second.length if first[0] == first[0]
+    first[0] <=> second[0]
+  end
+
+  def divergent_classes?(first, second)
+    first.class != second.class
+  end
+
+  # Example: ii <=> 7
+  def compare_divergent_classes(first, second)
+    first_priority = CLASS_PRIORITIES.find_index(first.class.name)
+    second_priority = CLASS_PRIORITIES.find_index(second.class.name)
+    first_priority <=> second_priority
+  end
+
+  # Temporarily Disabled
   # Edge Case: a <=> c
   #   c could have been interperetted as a RomanNumeral
   #   In the case that both values have a length of 1 and one of those values is 
@@ -86,13 +117,6 @@ class RuleNumber
     # return unless second.to_s.length == 1
     # true
     false
-  end
-
-  def compare_divergent_classes(first, second)
-    first_priority = CLASS_PRIORITIES.find_index(first.class.name)
-    second_priority = CLASS_PRIORITIES.find_index(second.class.name)
-    
-    first_priority <=> second_priority
   end
 
   def value_for(part)

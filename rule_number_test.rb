@@ -71,7 +71,7 @@ describe RuleNumber do
   end
 
   it "repeated" do
-    skip
+    # skip
     sorted = %w{
       6.1(a) 
       6.1(b) 

@@ -13,6 +13,8 @@ class RomanNumeral
   def to_i
     number
   end
+
+  private
   
   def from_roman(roman)
     r = roman.upcase

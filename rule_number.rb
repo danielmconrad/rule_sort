@@ -20,14 +20,16 @@ class RuleNumber
     value
   end
 
-  # <=> compares a self against another RuleNumber
+  # <=> compares self against another RuleNumber
   #   -1 means self < other
   #    1 means self > other
   #    0 means identical
   def <=>(other)
-    indexes = 0..[parts.length, other.parts.length].max
+    part_indexes = 0..[parts.length, other.parts.length].max
 
-    indexes.inject(IDENTICAL) do |_result, idx|
+    part_indexes.inject(IDENTICAL) do |_result, idx|
+      # Up until now, self and other have been IDENTICAL,
+      # but one of them may be longer than the other
       break LESS_THAN if idx == parts.length
       break GREATER_THAN if idx == other.parts.length
 
@@ -70,7 +72,7 @@ class RuleNumber
     end
   end
 
-  # Example: bbb, cc, a
+  # Example: bbb <=> cc, cc <=> a, aa <=> a
   def repeat_strings?(first, other)
     return false unless first.is_a?(String) && other.is_a?(String)
     first.split('').uniq.length == 1 && other.split('').uniq.length == 1
@@ -82,7 +84,7 @@ class RuleNumber
     first[0] <=> other[0]
   end
 
-  # Example: RomanNumeral, String
+  # Example: ii <=> a
   def divergent_classes?(first, other)
     first.class != other.class
   end
@@ -99,7 +101,7 @@ class RuleNumber
     first_priority <=> other_priority
   end
 
-  # Edge Case: a <=> c
+  # Example: a <=> c
   #   c could have been interperetted as a RomanNumeral
   #   In the case that both values have a length of 1 and one of those values is
   #   definitely not a RomanNumeral, we need to treat both as strings
